@@ -3,74 +3,44 @@
 #include <iostream>
 using namespace std;
 
-
-namespace cs202
+namespace queuehelp
 {
-    template<class T>
-class queue;
-template<class T>
-class listnode{
-    friend class queue<T>;
-    private:
+    template<class T> class queue;
+	template<class T> class listnode
+	{
+    	friend class queue<T>;
+    	private:
             T data;
             listnode *link;
-};
-  template <class T>
-    class queue
+	};
+	template <class T> class queue
     {
-           private:
-            listnode<T> *fron;
+		private:
+			listnode<T> *fron;
             listnode<T> *last;
-                int len;
-
-      public:
-        /*
-         * Constructs a new queue.
-         */
-        queue();
-        void print();
-        /*
-         * Pushes t to at the back of the queue.
-         */
-        void push(T& t);
-        /*
-         * Returns the element at the front of the queue.
-         * Also removes the front element from the queue.
-         */
-        T pop();
-        /*
-         * Returns the element at the front of the queue.
-         * Does not remove the front element.
-         */
-        T front();
-        /*
-         * Returns the number of elements currently in the queue.
-         */
-        inline int size();
-        /*
-         * Returns a boolean indicating whether the queue is empty or not.
-         */
-        inline bool empty();
-        /*
-         * Destructor
-         * Fress the memory occupied by the queue elements.
-         */
-        ~queue();
+            int len;
+		public:
+        	queue();
+        	void print();
+        	void push(T& t);
+        	T pop();
+        	T front();
+        	inline int size();
+        	inline bool empty();
+        	~queue();
     };
-            template<class T>
+    template<class T>
     void queue<T>::print()
     {
-         listnode<T> *tmp=fron;
+		listnode<T> *tmp=fron;
         while ( tmp!= NULL )
-
         {
-            cout<<tmp->data<<endl;
+			cout<<tmp->data<<"\n";
             tmp = tmp->link;
         }
     }
 
-
-        template<class T>
+	template<class T>
     queue<T>::queue()
     {
         fron=NULL;
@@ -80,68 +50,64 @@ class listnode{
 
     template<class T>
     void queue<T>::push(T& t)
-      {
-
-listnode<T>* newnode=new listnode<T>();
+	{
+		listnode<T>* newnode=new listnode<T>();
         newnode->data=t;
         newnode->link=NULL;
-         listnode<T> *tmp = fron;
-    if ( tmp != NULL ) {
-
-        last->link=newnode;
-        last=newnode;
-
-    len++;
+		listnode<T> *tmp = fron;
+		if (tmp!=NULL )
+		{
+        	last->link=newnode;
+        	last=newnode;
+    		len++;
+    	}
+    	else
+		{
+    		fron = last = newnode;
+    		len++;
+    	}
+	}
+	template<class T>
+	T queue<T>::pop()
+	{
+		listnode<T> *tmp;
+        T a= fron->data;
+        tmp = fron->link;
+        delete fron;
+        fron=tmp;
+        len--;
+        return a;
     }
-    else {
-    fron = last = newnode;
-    len++;
-    }
 
-      }
-
-
-        template<class T>
-    T queue<T>::pop()
-        {
-
-            listnode<T> *tmp;
-            T a= fron->data;
-           tmp = fron->link;
-            delete fron;
-            fron=tmp;
-            len--;
-            return a;
-        }
-        template<class T>
+	template<class T>
     T queue<T>::front()
-        {return fron->data;}
+    {
+		return fron->data;
+	}
 
-        template<class T>
+	template<class T>
     inline int queue<T>::size()
-        {return len;}
+    {
+		return len;
+	}
 
-        template<class T>
-        inline bool queue<T>::empty()
-        {
-            if(len>0) return false;
-            return true;
+    template<class T>
+    inline bool queue<T>::empty()
+    {
+		if (len>0)
+			return false;
+        return true;
+    }
 
-        }
-
-        template<class T>
-        queue<T>::~queue()
-        {
-
+    template<class T>
+    queue<T>::~queue()
+    {
         listnode<T> *tmp;
         while (fron)
-
         {   tmp = fron->link;
             delete fron;
             fron=tmp;
         }
-
-        }
-
+    }
 }
 #endif

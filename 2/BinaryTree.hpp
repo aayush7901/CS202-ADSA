@@ -1,12 +1,11 @@
 #ifndef BINARYTREE_HPP
 #define BINARYTREE_HPP 1
 
-#include <limits.h>
 #include "queue.hpp"
 #include <iostream>
 
 using namespace std;
-using namespace cs202;
+using namespace queuehelp;
 
 template <class Key, class Value>
 class BinaryNode
@@ -26,8 +25,8 @@ public:
 template <class Key, class Value>
 BinaryNode<Key,Value>::BinaryNode()
 {
-	this->key=(Key)0;
-	this->val=(Value)0;
+	this->key= Key();
+	this->val= Value();
 	this->left=NULL;
 	this->right=NULL;
 	this->parent=NULL;
@@ -58,7 +57,7 @@ public:
 	}
 	/* Implement get function to retrieve the value corresponding to given key in binary tree.
 	*/
-	virtual Value get(const Key& key);
+	Value get(const Key& key);
 	/* Implement remove function that can delete a node in binary tree with given key.
 	*/
 	virtual void remove(const Key& key) ;
@@ -172,7 +171,7 @@ void getUtil(BinaryNode<Key, Value> *p, const Key& key, Value& retValue)
 template <class Key, class Value>
 Value BinaryTree<Key,Value>::get(const Key& key)
 {
-	Value value=(Value)0;
+	Value value=Value();
 	getUtil(this->root, key, value);
 	return value;
 }
@@ -189,8 +188,8 @@ void BinaryTree<Key, Value>::removeUtil(BinaryNode<Key, Value> *p, const Key& ke
 			BinaryNode <Key, Value> *tmp=p;
 			while (tmp->left!=NULL)
 				tmp=tmp->left;
-			Value tmpvalue=(Value)0;
-			Key tmpkey=(Key)0;
+			Value tmpvalue=Value();
+			Key tmpkey=Key();
 			tmpvalue=tmp->val;
 			tmpkey=tmp->key;
 			tmp->val=p->val;
@@ -281,9 +280,9 @@ void BinaryTree<Key, Value>::remove(const Key& key)
 template <class Key, class Value>
 bool BinaryTree<Key, Value>::has(const Key& key)
 {
-	Value value=(Value)0;
+	Value value=Value();
 	getUtil(this->root,key,value);
-	if (value==(Value)0)
+	if (value==Value())
 		return false;
 	return true;
 }
@@ -368,9 +367,9 @@ void succUtil(BinaryNode<Key,Value> *p, BinaryNode<Key,Key> &tmp, Key tkey)
 {
 	if (p==NULL)
 		return;
-	if (((p->key -tkey)>0) && ((p->key -tkey)<tmp.val))
+	if (p->key > tkey)
 	{
-		tmp.val = p->key -tkey;
+		tkey = p->key;
 		tmp.key = p->key;
 	}
 	succUtil(p->left,tmp,tkey);
@@ -381,7 +380,7 @@ template <class Key, class Value>
 Key BinaryTree<Key,Value>::successor(const Key& key)
 {
 	BinaryNode<Key,Value> tmp;
-	tmp.val=maximum();
+	tmp.key=maximum();
 	succUtil(this->root,tmp,key);
 	return tmp.key;
 }
@@ -391,9 +390,9 @@ void predUtil(BinaryNode<Key,Value> *p, BinaryNode<Key,Key> &tmp, Key tkey)
 {
 	if (p==NULL)
 		return;
-	if (((tkey- p->key)>0) && ((tkey- p->key)<tmp.val))
+	if (p->key < tkey)
 	{
-		tmp.val = tkey - p->key;
+		tkey = p->key;
 		tmp.key = p->key;
 	}
 	predUtil(p->left,tmp,tkey);
@@ -404,9 +403,10 @@ template <class Key, class Value>
 Key BinaryTree<Key,Value>::predecessor(const Key& key)
 {
 	BinaryNode<Key,Value> tmp;
-	tmp.val=maximum();
+	tmp.key=maximum();
 	predUtil(this->root,tmp,key);
 	return tmp.key;
 }
 
 #endif /* ifndef BINARYTREE_HPP */
+//
