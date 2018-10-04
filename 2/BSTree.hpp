@@ -84,7 +84,7 @@ BinaryNode<Key,Value>* removeUtil(BinaryNode<Key,Value> *p, const Key &key)
 		return p;
 	if (key<p->key)
 		p->left=removeUtil(p->left,key);
-	else if (key<p->key)
+	else if (key>p->key)
 		p->right=removeUtil(p->right,key);
 	else
 	{
@@ -156,9 +156,9 @@ Value getUtil(BinaryNode<Key,Value>* p, const Key& key)
 	if (p->key==key)
 		return p->val;
 	else if (p->key<key)
-		getUtil(p->right,key);
+		return getUtil(p->right,key);
 	else if (p->key>key)
-		getUtil(p->left,key);
+		return getUtil(p->left,key);
 }
 
 template <class Key, class Value>

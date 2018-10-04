@@ -1,5 +1,6 @@
 #include "BinaryTree.hpp"
 #include "BSTree.hpp"
+#include "AVL.hpp"
 #include <iostream>
 
 template <class Key, class Value>
@@ -86,9 +87,51 @@ void bstinp(BSTree<Key,Value> a)
 	}
 }
 
+template <class Key, class Value>
+void avlinp(AVL<Key,Value> a)
+{
+	int q,x;
+	Key y;
+	cin>>q;
+	while (q--)
+	{
+		cin>>x;
+		if (x==1) //insert
+		{
+			cin>>y;
+			if (a.get(y)!=Value())
+				cout<<"Key Already Exists\n";
+			else
+				a.put(y,y);
+		}
+		else if (x==2) //delete
+		{
+			cin>>y;
+			if (a.get(y)!=Value())
+				a.remove(y);
+			else
+				cout<<"Key Not Found\n";
+		}
+		else if (x==3) //find
+		{
+			cin>>y;
+			if (a.get(y)!=Value())
+				cout<<"1\n";
+			else
+				cout<<"0\n";
+		}
+		else if (x==4) //max
+			cout<<a.maximum()<<"\n";
+		else if (x==5) //min
+			cout<<a.minimum()<<"\n";
+		else
+			cout<<"Enter choices from 1 to 5 only\n";
+	}
+}
+
 int main(int argc, char *argv[])
 {
-	string ttype="bst",dtype="int";
+	string ttype=argv[1],dtype=argv[2];
 	if (ttype=="bt")
 	{
 		if (dtype=="int")
@@ -143,6 +186,34 @@ int main(int argc, char *argv[])
 		{
 			BSTree<long long,long long> a;
 			bstinp(a);
+		}
+	}
+	else if (ttype=="avl")
+	{
+		if (dtype=="int")
+		{
+			AVL<int,int> a;
+			avlinp(a);
+		}
+		else if (dtype=="string")
+		{
+			AVL<string,string> a;
+			avlinp(a);
+		}
+		else if (dtype=="double")
+		{
+			AVL<double,double> a;
+			avlinp(a);
+		}
+		else if (dtype=="char")
+		{
+			AVL<char,char> a;
+			avlinp(a);
+		}
+		else if (dtype=="long")
+		{
+			AVL<long long,long long> a;
+			avlinp(a);
 		}
 	}
     return 0;

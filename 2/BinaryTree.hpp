@@ -57,7 +57,7 @@ public:
 	}
 	/* Implement get function to retrieve the value corresponding to given key in binary tree.
 	*/
-	Value get(const Key& key);
+	virtual Value get(const Key& key);
 	/* Implement remove function that can delete a node in binary tree with given key.
 	*/
 	virtual void remove(const Key& key) ;
