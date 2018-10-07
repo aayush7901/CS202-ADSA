@@ -39,6 +39,8 @@ public:
 	}
 	void insert(const Key& key, const Value& value);
 	void deleteKey(const Key& key);
+	void printrbtree();
+	BinaryNode<Key,Value>* deleteHelper(BinaryNode<Key,Value>* p, const Key& key);
 	BinaryNode<Key,Value>* rightRotate(BinaryNode<Key,Value> *p);
 	BinaryNode<Key,Value>* leftRotate(BinaryNode<Key,Value> *p);
 	/* Function : blackHeight
@@ -165,112 +167,166 @@ int RBTree<Key,Value>::blackHeight(BinaryNode<Key,Value>* p)
 template <class Key, class Value>
 void RBTree<Key,Value>::deleteRBFixup(BinaryNode<Key,Value>* p)
 {
-	BinaryNode<Key,Value> *s;
-	while (p!=this->root && p->color==BLACK)
+	if (p==NULL) // Not found
+		return;
+	if (p==this->root)  // root to delete when only one node present
 	{
-		if (p->parent->left==p)
-		{
-			s=p->parent->right;
-			if (s->color==RED)
-			{
-				s->color=BLACK;
-				p->parent->color=RED;
-				leftRotate(p->parent);
-				s=p->parent->right;
-			}
-			if (s->right->color==BLACK && s->left->color==BLACK)
-			{
-				s->color=RED;
-				p=p->parent;
-			}
-			else
-			{
-				if (s->right->color==BLACK)
-				{
-					s->left->color=BLACK;
-					s->color=RED;
-					rightRotate(s);
-					s=p->parent->right;
-				}
-				s->color=p->parent->color;
-				p->parent->color=BLACK;
-				s->right->color=BLACK;
-				leftRotate(p->parent);
-				p=this->root;
-			}
-		}
+		this->root=NULL;
+		return;
+	}
+	if (p->color==RED || p->left->color==RED || p->right->color==RED)
+	{
+		BinaryNode<Key,Value> *child;
+		if (p->left!=NULL)
+			child=p->left;
 		else
+			child=p->right;
+		if (p==p->parent->left)
+			p->parent->left=child;
+		else
+			p->parent->right=child;
+		if (child!=NULL)
 		{
-			s=p->parent->left;
-			if (s->color==RED)
+			child->parent=p->parent;
+			child->color=BLACK;
+		}
+		delete p;
+	}
+	else
+	{
+		BinaryNode<Key,Value> *sib= NULL;
+		BinaryNode<Key,Value> *pa=NULL;
+		BinaryNode<Key,Value> *ptr=p;
+		ptr->color=DOUBLE_BLACK;
+		while (ptr!=this->root && ptr->color==DOUBLE_BLACK)
+		{
+			pa=ptr->parent;
+			if (ptr==pa->left)
 			{
-				s->color=BLACK;
-				p->parent->color=RED;
-				rightRotate(p->parent);
-				s=p->parent->left;
-			}
-			if (s->left->color==BLACK && s->right->color==BLACK)
-			{
-				s->color=RED;
-				p=p->parent;
+				sib=pa->right;
+				if (sib->color==RED)
+				{
+					sib->color=BLACK;
+					pa->color=RED;
+					leftRotate(pa);
+				}
+				else
+				{
+					if (sib->left->color==BLACK && sib->right->color==BLACK)
+					{
+						sib->color=RED;
+						if(pa->color==RED)
+							pa->color=BLACK;
+						else
+							pa->color=DOUBLE_BLACK;
+						ptr=pa;
+					}
+					else
+					{
+						if (sib->right->color==BLACK)
+						{
+							sib->left->color=BLACK;
+							sib->color=RED;
+							rightRotate(sib);
+							sib=pa->right;
+						}
+						sib->color=pa->color;
+						pa->color=BLACK;
+						sib->right->color=BLACK;
+						leftRotate(pa);
+						break;
+					}
+				}
 			}
 			else
 			{
-				if (s->left->color==BLACK)
+				sib=pa->left;
+				if (sib->color==RED)
 				{
-					s->right->color=BLACK;
-					s->color=RED;
-					leftRotate(s);
-					s=p->parent->left;
+					sib->color=BLACK;
+					pa->color=RED;
+					rightRotate(pa);
 				}
-				s->color=p->parent->color;
-				p->parent->color=BLACK;
-				s->left->color=BLACK;
-				rightRotate(p->parent);
-				p=this->root;
+				else
+				{
+					if (sib->left->color==BLACK && sib->right->color==BLACK)
+					{
+						sib->color=RED;
+						if(pa->color==RED)
+							pa->color=BLACK;
+						else
+							pa->color=DOUBLE_BLACK;
+						ptr=pa;
+					}
+					else
+					{
+						if (sib->left->color==BLACK)
+						{
+							sib->left->color=BLACK;
+							sib->color=RED;
+							leftRotate(sib);
+							sib=pa->left;
+						}
+						sib->color=pa->color;
+						pa->color=BLACK;
+						sib->left->color=BLACK;
+						rightRotate(pa);
+						break;
+					}
+				}
 			}
 		}
-		p->color=BLACK;
+		if (p==p->parent->left)
+			p->parent->left=NULL;
+		else
+			p->parent->right=NULL;
+		delete p;
 		this->root->color=BLACK;
+	}
+}
+
+template <class Key, class Value>
+BinaryNode<Key,Value>* RBTree<Key,Value>::deleteHelper(BinaryNode<Key,Value>* p, const Key& key)
+{
+	if (p==NULL)
+		return p;
+	if (p->left==NULL && p->right==NULL)
+		return p;
+	if (key<p->key)
+		return deleteHelper(p->left,key);
+	else if (key>p->key)
+		return deleteHelper(p->right,key);
+	else
+	{
+		BinaryNode<Key,Value>*tmp=findUtil(this->root,succUtil(this->root,p));
+		p->key=tmp->key;
+		p->val=tmp->val;
+		return deleteHelper(p->right, key);
 	}
 }
 
 template <class Key, class Value>
 void RBTree<Key,Value>::deleteKey(const Key& key)
 {
-		BinaryNode<Key,Value> *q,*y,*p = findUtil(this->root, key);
-		if (p->left==NULL || p->right==NULL)
-			y=p;
-		else
-			y=findUtil(this->root,succUtil(this->root,p));
-		if (y->left!=NULL)
-			q=y->left;
-		else
-		{
-			if (y->right!=NULL)
-				q=y->right;
-			else
-				q=NULL;
-		}
-		if (q!=NULL)
-			q->parent=y->parent;
-		if (y->parent==NULL)
-			this->root=q;
-		else
-		{
-			if (y==y->parent->left)
-				y->parent->left=q;
-			else
-				y->parent->right=q;
-		}
-		if (y!=p)
-		{
-			p->color=y->color;
-			p->key=y->key;
-			p->val=y->val;
-		}
-		if (y->color==BLACK)
-			deleteRBFixup(q);
+	BinaryNode<Key,Value> *p = deleteHelper(this->root, key);
+	deleteRBFixup(p);
 }
+
+// template <class Key, class Value>
+// void printrb(BinaryNode<Key,Value> *root)
+// {
+// 	if(root==NULL)
+// 		return;
+// 	printrb(root->left);
+// 	cout<<(root->key)<<" "<<(root->val)<<" "<<(root->color)<<"\n";
+// 	printrb(root->right);
+// }
+//
+// template <class Key, class Value>
+// void RBTree<Key,Value> :: printrbtree()
+// {
+// //	std::cout<<this->root->color<<"\n";
+// 	printrb(this->root);
+// }
 
 #endif /* ifndef RBTree_HPP_ */

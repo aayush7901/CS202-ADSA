@@ -16,16 +16,25 @@ void btinp(BinaryTree<Key,Value> a)
 		if (x==1) //insert
 		{
 			cin>>y;
+			Value gv=a.get(y);
 			if (a.get(y)!=Value())
-				cout<<"Key Already Exists\n";
+			{
+				a.remove(y);
+				a.put(y,gv+1); //increases frequency by 1
+			}
 			else
-				a.put(y,y);
+				a.put(y,1);  // insert and set value to 1 .. here value is frequency
 		}
 		else if (x==2) //delete
 		{
 			cin>>y;
+			Value gv=a.get(y);
 			if (a.get(y)!=Value())
+			{
 				a.remove(y);
+				if (gv!=1)
+					a.put(y,gv-1);
+			}
 			else
 				cout<<"Key Not Found\n";
 		}
@@ -58,16 +67,25 @@ void bstinp(BSTree<Key,Value> a)
 		if (x==1) //insert
 		{
 			cin>>y;
+			Value gv=a.get(y);
 			if (a.get(y)!=Value())
-				cout<<"Key Already Exists\n";
+			{
+				a.remove(y);
+				a.put(y,gv+1);
+			}
 			else
-				a.put(y,y);
+				a.put(y,1);
 		}
 		else if (x==2) //delete
 		{
 			cin>>y;
+			Value gv=a.get(y);
 			if (a.get(y)!=Value())
+			{
 				a.remove(y);
+				if (gv!=1)
+					a.put(y,gv-1);
+			}
 			else
 				cout<<"Key Not Found\n";
 		}
@@ -100,16 +118,25 @@ void avlinp(AVL<Key,Value> a)
 		if (x==1) //insert
 		{
 			cin>>y;
+			Value gv=a.get(y);
 			if (a.get(y)!=Value())
-				cout<<"Key Already Exists\n";
+			{
+				a.remove(y);
+				a.put(y,gv+1);
+			}
 			else
-				a.put(y,y);
+				a.put(y,1);
 		}
 		else if (x==2) //delete
 		{
 			cin>>y;
+			Value gv=a.get(y);
 			if (a.get(y)!=Value())
+			{
 				a.remove(y);
+				if (gv!=1)
+					a.put(y,gv-1);
+			}
 			else
 				cout<<"Key Not Found\n";
 		}
@@ -142,18 +169,30 @@ void rbtinp(RBTree<Key,Value> a)
 		if (x==1) //insert
 		{
 			cin>>y;
+			Value gv=a.get(y);
 			if (a.get(y)!=Value())
-				cout<<"Key Already Exists\n";
+			{
+				// a.printrbtree();
+				a.deleteKey(y);
+				// a.printrbtree();
+				a.insert(y,gv+1);
+			}
 			else
-				a.insert(y,y);
+				a.insert(y,1);
 		}
 		else if (x==2) //delete
 		{
 			cin>>y;
+			Value gv=a.get(y);
 			if (a.get(y)!=Value())
+			{
 				a.deleteKey(y);
+				if (gv!=1)
+					a.insert(y,gv-1);
+			}
 			else
 				cout<<"Key Not Found\n";
+			// a.printrbtree();
 		}
 		else if (x==3) //find
 		{
@@ -184,22 +223,22 @@ int main(int argc, char *argv[])
 		}
 		else if (dtype=="string")
 		{
-			BinaryTree<string,string> a;
+			BinaryTree<string,int> a;
 			btinp(a);
 		}
 		else if (dtype=="double")
 		{
-			BinaryTree<double,double> a;
+			BinaryTree<double,int> a;
 			btinp(a);
 		}
 		else if (dtype=="char")
 		{
-			BinaryTree<char,char> a;
+			BinaryTree<char,int> a;
 			btinp(a);
 		}
 		else if (dtype=="long")
 		{
-			BinaryTree<long long,long long> a;
+			BinaryTree<long long,int> a;
 			btinp(a);
 		}
 	}
@@ -212,22 +251,22 @@ int main(int argc, char *argv[])
 		}
 		else if (dtype=="string")
 		{
-			BSTree<string,string> a;
+			BSTree<string,int> a;
 			bstinp(a);
 		}
 		else if (dtype=="double")
 		{
-			BSTree<double,double> a;
+			BSTree<double,int> a;
 			bstinp(a);
 		}
 		else if (dtype=="char")
 		{
-			BSTree<char,char> a;
+			BSTree<char,int> a;
 			bstinp(a);
 		}
 		else if (dtype=="long")
 		{
-			BSTree<long long,long long> a;
+			BSTree<long long,int> a;
 			bstinp(a);
 		}
 	}
@@ -240,22 +279,22 @@ int main(int argc, char *argv[])
 		}
 		else if (dtype=="string")
 		{
-			AVL<string,string> a;
+			AVL<string,int> a;
 			avlinp(a);
 		}
 		else if (dtype=="double")
 		{
-			AVL<double,double> a;
+			AVL<double,int> a;
 			avlinp(a);
 		}
 		else if (dtype=="char")
 		{
-			AVL<char,char> a;
+			AVL<char,int> a;
 			avlinp(a);
 		}
 		else if (dtype=="long")
 		{
-			AVL<long long,long long> a;
+			AVL<long long,int> a;
 			avlinp(a);
 		}
 	}
@@ -268,22 +307,22 @@ int main(int argc, char *argv[])
 		}
 		else if (dtype=="string")
 		{
-			RBTree<string,string> a;
+			RBTree<string,int> a;
 			rbtinp(a);
 		}
 		else if (dtype=="double")
 		{
-			RBTree<double,double> a;
+			RBTree<double,int> a;
 			rbtinp(a);
 		}
 		else if (dtype=="char")
 		{
-			RBTree<char,char> a;
+			RBTree<char,int> a;
 			rbtinp(a);
 		}
 		else if (dtype=="long")
 		{
-			RBTree<long long,long long> a;
+			RBTree<long long,int> a;
 			rbtinp(a);
 		}
 	}

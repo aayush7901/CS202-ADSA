@@ -21,24 +21,13 @@ namespace queuehelp
             int len;
 		public:
         	queue();
-        	void print();
         	void push(T& t);
         	T pop();
         	T front();
-        	inline int size();
-        	inline bool empty();
+        	int size();
+        	bool empty();
         	~queue();
     };
-    template<class T>
-    void queue<T>::print()
-    {
-		listnode<T> *tmp=fron;
-        while ( tmp!= NULL )
-        {
-			cout<<tmp->data<<"\n";
-            tmp = tmp->link;
-        }
-    }
 
 	template<class T>
     queue<T>::queue()
@@ -86,13 +75,13 @@ namespace queuehelp
 	}
 
 	template<class T>
-    inline int queue<T>::size()
+    int queue<T>::size()
     {
 		return len;
 	}
 
     template<class T>
-    inline bool queue<T>::empty()
+    bool queue<T>::empty()
     {
 		if (len>0)
 			return false;

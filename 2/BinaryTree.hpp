@@ -6,7 +6,7 @@
 
 using namespace std;
 using namespace queuehelp;
-enum Color { RED, BLACK };
+enum Color { RED, BLACK, DOUBLE_BLACK };
 
 template <class Key, class Value>
 class BinaryNode
@@ -365,7 +365,7 @@ Key BinaryTree<Key,Value> :: maximum()
 }
 
 template<class Key, class Value>
-void succUtil(BinaryNode<Key,Value> *p, BinaryNode<Key,Key> &tmp, Key tkey)
+void succUtil(BinaryNode<Key,Value> *p, BinaryNode<Key,Value> &tmp, Key tkey)
 {
 	if (p==NULL)
 		return;
@@ -388,7 +388,7 @@ Key BinaryTree<Key,Value>::successor(const Key& key)
 }
 
 template<class Key, class Value>
-void predUtil(BinaryNode<Key,Value> *p, BinaryNode<Key,Key> &tmp, Key tkey)
+void predUtil(BinaryNode<Key,Value> *p, BinaryNode<Key,Value> &tmp, Key tkey)
 {
 	if (p==NULL)
 		return;
