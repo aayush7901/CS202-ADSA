@@ -173,12 +173,16 @@ void rbtinp(RBTree<Key,Value> a)
 			if (a.get(y)!=Value())
 			{
 				// a.printrbtree();
+				// cout<<"a\n";
 				a.deleteKey(y);
+				// cout<<"b\n";
 				// a.printrbtree();
 				a.insert(y,gv+1);
+				// cout<<"c\n";
 			}
 			else
 				a.insert(y,1);
+			// a.printrbtree();
 		}
 		else if (x==2) //delete
 		{
