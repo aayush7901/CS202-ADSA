@@ -6,6 +6,7 @@
 
 using namespace std;
 using namespace queuehelp;
+enum Color { RED, BLACK };
 
 template <class Key, class Value>
 class BinaryNode
@@ -13,6 +14,7 @@ class BinaryNode
 public:
 	Key key;
 	Value val;
+	Color color;
 	BinaryNode<Key,Value> *left, *right, *parent;
     /*Default constructor. Should assign the default value to key and value
      */
