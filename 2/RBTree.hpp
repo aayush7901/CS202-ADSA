@@ -301,7 +301,7 @@ void RBTree<Key, Value>::deleteKey(const Key& key)
 		p->val=y->val;
 	}
 	if (y->color==BLACK)   // fixup needed only when node deleted was black
-		deleteRBFixup(x,xparent,yIsLeft);
+		deleteRBFixup(x,xparent,yIsLeft);  //xparent,yIsLeft is passed for cases where x is NIL node as this code does not use NIL node implementation
 }
 
 template <class Key, class Value>

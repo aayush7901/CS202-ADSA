@@ -1,12 +1,12 @@
 #ifndef BINARYTREE_HPP
 #define BINARYTREE_HPP 1
 
-#include "queue.hpp"
+#include "queue.hpp" //Queue needed for insertion
 #include <iostream>
 
 using namespace std;
-using namespace queuehelp;
-enum Color { RED, BLACK };
+using namespace queuehelp; 
+enum Color { RED, BLACK };  //Used in RBTree later on
 
 template <class Key, class Value>
 class BinaryNode
@@ -14,7 +14,7 @@ class BinaryNode
 public:
 	Key key;
 	Value val;
-	Color color;
+	Color color;		//Used in RBTree later on
 	BinaryNode<Key,Value> *left, *right, *parent;
     /*Default constructor. Should assign the default value to key and value
      */
