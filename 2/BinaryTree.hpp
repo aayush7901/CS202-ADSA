@@ -6,7 +6,7 @@
 
 using namespace std;
 using namespace queuehelp;
-enum Color { RED, BLACK, DOUBLE_BLACK };
+enum Color { RED, BLACK };
 
 template <class Key, class Value>
 class BinaryNode

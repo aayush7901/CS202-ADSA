@@ -30,8 +30,7 @@ class RBTree : public BSTree<Key, Value> {
 	 * Used after a deletion in the rb tree.
 	 * It applies fixing mechanisms to make sure that the tree remains a valid red black tree after a deletion.
 	 */
-	void deleteRBFixup(BinaryNode<Key,Value>* p);
-
+	void deleteRBFixup(BinaryNode<Key,Value>* x, BinaryNode<Key,Value>* xparent, bool xIsLeft);
 public:
 	RBTree()
 	{
@@ -40,9 +39,8 @@ public:
 	void insert(const Key& key, const Value& value);
 	void deleteKey(const Key& key);
 	void printrbtree();
-	BinaryNode<Key,Value>* deleteHelper(BinaryNode<Key,Value>* p, const Key& key);
-	BinaryNode<Key,Value>* rightRotate(BinaryNode<Key,Value> *p);
-	BinaryNode<Key,Value>* leftRotate(BinaryNode<Key,Value> *p);
+	BinaryNode<Key,Value>* rightRotate(BinaryNode<Key,Value> *g);
+	BinaryNode<Key,Value>* leftRotate(BinaryNode<Key,Value> *g);
 	/* Function : blackHeight
 	 *
 	 * Returns:
@@ -56,43 +54,43 @@ public:
 };
 
 template <class Key, class Value>
-BinaryNode<Key,Value>* RBTree<Key,Value>::rightRotate(BinaryNode<Key,Value>* p)
+BinaryNode<Key,Value>* RBTree<Key,Value>::rightRotate(BinaryNode<Key,Value>* g)
 {
-	BinaryNode<Key,Value> *x=p->left;
-	x->parent=p->parent;
-	if (p->parent==NULL) // p root
-		this->root=x;
-	else if (p->parent->left==p) //p left child
-		p->parent->left=x;
-	else if (p->parent->right==p) //p right child
-		p->parent->right=x;
-	BinaryNode<Key,Value> *y=x->right;
-	if (y)
-		y->parent=p;
-	p->parent=x;
-	p->left=y;
-	x->right=p;
-	return x;
+	BinaryNode<Key,Value> *p=g->left;
+	p->parent=g->parent;
+	if (g->parent==NULL) // g root
+		this->root=p;
+	else if (g->parent->left==g) //g left child
+		g->parent->left=p;
+	else if (g->parent->right==g) //g right child
+		g->parent->right=p;
+	BinaryNode<Key,Value> *rchild=p->right;
+	if (rchild)
+		rchild->parent=g;
+	g->parent=p;
+	g->left=rchild;
+	p->right=g;
+	return p;
 }
 
 template <class Key, class Value>
-BinaryNode<Key,Value>* RBTree<Key,Value>::leftRotate(BinaryNode<Key,Value>* p)
+BinaryNode<Key,Value>* RBTree<Key,Value>::leftRotate(BinaryNode<Key,Value>* g)
 {
-	BinaryNode<Key,Value> *x=p->right;
-	x->parent=p->parent;
-	if (p->parent==NULL) // p root
-		this->root=x;
-	else if (p->parent->left==p) //p left child
-		p->parent->left=x;
-	else if (p->parent->right==p) //p right child
-		p->parent->right=x;
-	BinaryNode<Key,Value> *y=x->left;
-	if (y)
-		y->parent=p;
-	p->parent=x;
-	p->right=y;
-	x->left=p;
-	return x;
+	BinaryNode<Key,Value> *p=g->right;
+	p->parent=g->parent;
+	if (g->parent==NULL) // g root
+		this->root=p;
+	else if (g->parent->left==g) //g left child
+		g->parent->left=p;
+	else if (g->parent->right==g) //g right child
+		g->parent->right=p;
+	BinaryNode<Key,Value> *lchild=p->left;
+	if (lchild)
+		lchild->parent=g;
+	g->parent=p;
+	g->right=lchild;
+	p->left=g;
+	return p;
 }
 
 template <class Key, class Value>
@@ -100,7 +98,7 @@ void RBTree<Key,Value>::insertRBFixup(BinaryNode<Key,Value>* p)
 {
 	if (p==this->root)
 		p->color=BLACK;
-	else if (p->parent->color!=BLACK)
+	else if (p->parent->color!=BLACK)  // problem only when parent is red of red
 	{
 		//Find parent's sibling (uncle)
 		BinaryNode<Key,Value> *unc;
@@ -149,6 +147,7 @@ void RBTree<Key,Value>::insertRBFixup(BinaryNode<Key,Value>* p)
 			}
 		}
 	}
+	this->root->color=BLACK;
 }
 
 template <class Key, class Value>
@@ -172,162 +171,137 @@ int RBTree<Key,Value>::blackHeight(BinaryNode<Key,Value>* p)
 }
 
 template <class Key, class Value>
-int getColor(BinaryNode<Key,Value>* p)
+bool isRed(BinaryNode<Key,Value> *p)
 {
 	if (p==NULL)
-		return BLACK;
-	return p->color;
+		return false;
+	return (p->color==RED);
 }
 
 template <class Key, class Value>
-void setColor(BinaryNode<Key,Value>* p, Color color)
+bool isBlack(BinaryNode<Key,Value> *p)
 {
 	if (p==NULL)
-		return;
-	p->color=color;
+		return true;
+	return (p->color==BLACK);
 }
 
 template <class Key, class Value>
-void RBTree<Key,Value>::deleteRBFixup(BinaryNode<Key,Value>* p)
+void RBTree<Key,Value> :: deleteRBFixup(BinaryNode<Key,Value>* x, BinaryNode<Key,Value>* xparent, bool xIsLeft)
 {
-	if (p==NULL) // Not found
-		return;
-	if (p==this->root)  // root to delete when only one node present
+	BinaryNode<Key,Value> *w;
+	while (x!=this->root && isBlack(x))
 	{
-		this->root=NULL;
-		return;
-	}
-	if (getColor(p)==RED || getColor(p->left)==RED || getColor(p->right)==RED)
-	{
-		BinaryNode<Key,Value> *child;
-		if (p->left!=NULL)
-			child=p->left;
-		else
-			child=p->right;
-		if (p==p->parent->left)
-			p->parent->left=child;
-		else
-			p->parent->right=child;
-		if (child!=NULL)
-			child->parent=p->parent;
-		setColor(child,BLACK);
-		delete p;
-	}
-	else
-	{
-		BinaryNode<Key,Value> *sib= NULL;
-		BinaryNode<Key,Value> *pa=NULL;
-		BinaryNode<Key,Value> *ptr=p;
-		setColor(ptr,DOUBLE_BLACK);
-		while (ptr!=this->root && ptr->color==DOUBLE_BLACK)
+		if (xIsLeft)
 		{
-			pa=ptr->parent;
-			if (ptr==pa->left)
+			w=xparent->right;	// w is sibling
+			if (isRed(w))
 			{
-				sib=pa->right;
-				if (getColor(sib)==RED)
-				{
-					setColor(sib,BLACK);
-					setColor(pa,RED);
-					leftRotate(pa);
-				}
-				else
-				{
-					if (getColor(sib->left)==BLACK && getColor(sib->right)==BLACK)
-					{
-						setColor(sib,RED);
-						if(getColor(pa)==RED)
-							setColor(pa,BLACK);
-						else
-							setColor(pa,DOUBLE_BLACK);
-						ptr=pa;
-					}
-					else
-					{
-						if (getColor(sib->right)==BLACK)
-						{
-							setColor(sib->left,BLACK);
-							setColor(sib,RED);
-							rightRotate(sib);
-							sib=pa->right;
-						}
-						setColor(sib,pa->color);
-						setColor(pa,BLACK);
-						setColor(sib->right,BLACK);
-						leftRotate(pa);
-						break;
-					}
-				}
+				w->color=BLACK;
+				xparent->color=RED;
+				leftRotate(xparent);
+				w=xparent->right;
+			}
+			if (isBlack(w->left) && isBlack(w->right))
+			{
+				w->color=RED;
+				x=xparent;
+				xparent=x->parent;
+				xIsLeft=(xparent!=NULL && x==xparent->left);
 			}
 			else
 			{
-				sib=pa->left;
-				if (getColor(sib)==RED)
+				if (isBlack(w->right))
 				{
-					setColor(sib,BLACK);
-					setColor(pa,RED);
-					rightRotate(pa);
+					w->left->color=BLACK;
+					w->color=RED;
+					rightRotate(w);
+					w=xparent->right;
 				}
-				else
-				{
-					if (getColor(sib->left)==BLACK && getColor(sib->right)==BLACK)
-					{
-						setColor(sib,RED);
-						if(getColor(pa)==RED)
-							setColor(pa,BLACK);
-						else
-							setColor(pa,DOUBLE_BLACK);
-						ptr=pa;
-					}
-					else
-					{
-						if (getColor(sib->left)==BLACK)
-						{
-							setColor(sib->right,BLACK);
-							setColor(sib,RED);
-							leftRotate(sib);
-							sib=pa->left;
-						}
-						setColor(sib,pa->color);
-						setColor(pa,BLACK);
-						setColor(sib->left,BLACK);
-						rightRotate(pa);
-						break;
-					}
-				}
+				w->color=xparent->color;
+				xparent->color=BLACK;
+				if (w->right!=NULL)
+					w->right->color=BLACK;
+				leftRotate(xparent);
+				x=this->root;
+				xparent=NULL;
 			}
 		}
-		if (p==p->parent->left)
-			p->parent->left=NULL;
 		else
-			p->parent->right=NULL;
-		delete p;
-		setColor(this->root, BLACK);
+		{
+			w=xparent->left;	// w is sibling
+			if (isRed(w))
+			{
+				w->color=BLACK;
+				xparent->color=RED;
+				rightRotate(xparent);
+				w=xparent->left;
+			}
+			if (isBlack(w->right) && isBlack(w->left))
+			{
+				w->color=RED;
+				x=xparent;
+				xparent=x->parent;
+				xIsLeft=(xparent!=NULL && x==x->parent->left);
+			}
+			else
+			{
+				if (isBlack(w->left))
+				{
+					w->right->color=BLACK;
+					w->color=RED;
+					leftRotate(w);
+					w=xparent->left;
+				}
+				w->color=xparent->color;
+				xparent->color=BLACK;
+				if (w->left!=NULL)
+					w->left->color=BLACK;
+				rightRotate(xparent);
+				x=this->root;
+				xparent=NULL;
+			}
+		}
 	}
+	if (x!=NULL)
+		x->color=BLACK;
 }
 
-template <class Key, class Value>
-BinaryNode<Key,Value>* RBTree<Key,Value>::deleteHelper(BinaryNode<Key,Value>* p, const Key& key)
+template<class Key, class Value>
+void RBTree<Key, Value>::deleteKey(const Key& key)
 {
-	if (p==NULL)
-		return p;
-	if (key<p->key)
-		return deleteHelper(p->left,key);
-	if (key>p->key)
-		return deleteHelper(p->right,key);
-	if (p->left==NULL || p->right==NULL)
-		return p;
-	BinaryNode<Key,Value>*tmp=findUtil(this->root,succUtil(this->root,p));
-	p->key=tmp->key;
-	p->val=tmp->val;
-	return deleteHelper(p->right, key);
-}
-
-template <class Key, class Value>
-void RBTree<Key,Value>::deleteKey(const Key& key)
-{
-	BinaryNode<Key,Value> *p = deleteHelper(this->root, key);
-	deleteRBFixup(p);
+	BinaryNode<Key,Value> *xparent, *x, *y, *p = findUtil(this->root, key);
+	if (p->left==NULL || p->right==NULL)  // always delete single child or no child node y
+		y=p;
+	else
+		y=findUtil(this->root,succUtil(this->root,p));
+	if (y->left)	// x is child of y that replaces y
+		x=y->left;
+	else
+		x=y->right;
+	if (x!=NULL)
+		x->parent=y->parent;
+	xparent=y->parent;
+	bool yIsLeft=false;
+	if (y->parent==NULL)
+		this->root=x;
+	else if (y->parent->left==y)
+	{
+		y->parent->left=x;
+		yIsLeft=true;
+	}
+	else
+	{
+		y->parent->right=x;
+		yIsLeft=false;
+	}
+	if (y!=p)
+	{
+		p->key=y->key;
+		p->val=y->val;
+	}
+	if (y->color==BLACK)   // fixup needed only when node deleted was black
+		deleteRBFixup(x,xparent,yIsLeft);
 }
 
 template <class Key, class Value>
