@@ -5,7 +5,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace queuehelp; 
+using namespace queuehelp;
 enum Color { RED, BLACK };  //Used in RBTree later on
 
 template <class Key, class Value>
@@ -15,6 +15,8 @@ public:
 	Key key;
 	Value val;
 	Color color;		//Used in RBTree later on
+	int height;			//Used in avl tree later
+	int size;			//Used in prob2 augment avl tree
 	BinaryNode<Key,Value> *left, *right, *parent;
     /*Default constructor. Should assign the default value to key and value
      */
@@ -85,7 +87,7 @@ public:
 	*observed in a post order traversal.
 	*/
 
-	void removeUtil(BinaryNode<Key,Value> *p, const Key& key);
+	void removeUtil(BinaryNode<Key,Value> *p);
 
 	virtual void print_post_order();
 	/*
@@ -178,105 +180,62 @@ Value BinaryTree<Key,Value>::get(const Key& key)
 	return value;
 }
 
-template <class Key, class Value>
-void BinaryTree<Key, Value>::removeUtil(BinaryNode<Key, Value> *p, const Key& key)
+template<class Key,class Value>
+void BinaryTree <Key,Value> :: removeUtil(BinaryNode<Key,Value> * p)
 {
-	if (p==NULL)
-		return;
-	if (key==p->key)
+	queue<BinaryNode<Key,Value>* > q;
+	q.push(this->root);
+	BinaryNode<Key,Value> *temp;
+	while (!q.empty())
 	{
-		if (p->left && p->right)
+		temp = q.pop();
+		if (temp->right)
 		{
-			BinaryNode <Key, Value> *tmp=p;
-			while (tmp->left!=NULL)
-				tmp=tmp->left;
-			Value tmpvalue=Value();
-			Key tmpkey=Key();
-			tmpvalue=tmp->val;
-			tmpkey=tmp->key;
-			tmp->val=p->val;
-			tmp->key=p->key;
-			p->val=tmpvalue;
-			p->key=tmpkey;
-			removeUtil(p, tmp->key);
-			return;
-		}
-		else if (p->left)
-		{
-			if (p==this->root)
+			if (temp->right == p)
 			{
-				delete this->root;
-				this->root=p->left;
-				return;
-			}
-			else if (p->parent->left==p)
-			{
-				p->parent->left=p->left;
-				p->left->parent=p->parent;
-				delete p;
+				temp->right = NULL;
+				delete(p);
 				return;
 			}
 			else
-			{
-				p->parent->right=p->left;
-				p->left->parent=p->parent;
-				delete p;
-				return;
-			}
+				q.push(temp->right);
 		}
-		else if (p->right)
+		if (temp->left)
 		{
-			if (p==this->root)
+			if (temp->left == p)
 			{
-				delete this->root;
-				this->root=p->right;
-				return;
-			}
-			else if (p->parent->left==p)
-			{
-				p->parent->left=p->right;
-				p->right->parent=p->parent;
-				delete p;
+				temp->left=NULL;
+				delete(p);
 				return;
 			}
 			else
-			{
-				p->parent->right=p->right;
-				p->right->parent=p->parent;
-				delete p;
-				return;
-			}
-		}
-		else
-		{
-			if (p==this->root)
-			{
-				delete this->root;
-				this->root=NULL;
-				return;
-			}
-			else if (p->parent->left==p)
-			{
-				p->parent->left=NULL;
-				delete p;
-				return;
-			}
-			else
-			{
-				p->parent->right=NULL;
-				delete p;
-				return;
-			}
+				q.push(temp->left);
 		}
 	}
-	removeUtil(p->left,key);
-	removeUtil(p->right,key);
 }
 
 template <class Key, class Value>
 void BinaryTree<Key, Value>::remove(const Key& key)
 {
-	removeUtil(this->root, key);
+	BinaryNode<Key,Value> *p, *cur;
+	queue < BinaryNode<Key,Value>* > q;
+	q.push(this->root);
+	// cur will be deepest node and p will be node to be deleted
+	while (!q.empty())
+	{
+		cur = q.pop();
+		if (cur->key==key)
+			p=cur;
+		if (cur->left)
+			q.push(cur->left);
+		if (cur->right)
+			q.push(cur->right);
+	}
+	Value tmpval=cur->val;
+	Key tmpkey=cur->key;
+	removeUtil(cur);
+	p->key=tmpkey;
+	p->val=tmpval;
 }
 
 template <class Key, class Value>
@@ -301,7 +260,7 @@ void BinaryTree<Key,Value>::put(const Key& key, const Value& value)
 	p = new BinaryNode<Key,Value>(key,value);
 	queue < BinaryNode<Key,Value> *> q;
 	q.push(this->root);
-	while (1)
+	while (!q.empty())
 	{
 		BinaryNode<Key,Value> *cur = q.pop();
 		if (cur->left==NULL)

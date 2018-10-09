@@ -281,7 +281,7 @@ void RBTree<Key, Value>::deleteKey(const Key& key)
 		x=y->right;
 	if (x!=NULL)
 		x->parent=y->parent;
-	xparent=y->parent;
+	xparent=y->parent;   // used to pass parent to fixup when x is null
 	bool yIsLeft=false;
 	if (y->parent==NULL)
 		this->root=x;
@@ -295,7 +295,7 @@ void RBTree<Key, Value>::deleteKey(const Key& key)
 		y->parent->right=x;
 		yIsLeft=false;
 	}
-	if (y!=p)
+	if (y!=p)				//replace contents of succ y to p and then delete y
 	{
 		p->key=y->key;
 		p->val=y->val;

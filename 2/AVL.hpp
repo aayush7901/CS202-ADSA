@@ -1,6 +1,7 @@
 #ifndef AVL_HPP
 #define AVL_HPP 1
 #include "BSTree.hpp"
+
 template <class Key, class Value>
 class AVL : public BSTree<Key, Value> {
   /*
@@ -11,7 +12,7 @@ class AVL : public BSTree<Key, Value> {
    */
   /*
    * Apart from that, your code should have the following four functions:
-   * getBalance(node) -> To get the balance at any given node;
+   * getBalance(p) -> To get the balance at any given node;
    * doBalance(node) -> To fix the balance at the given node;
    * rightRotate(node) -> Perform a right rotation about the given node.
    * leftRotate(node) -> Perform a left rotation about the given node.
@@ -24,7 +25,7 @@ public:
 	int getBalance(BinaryNode<Key,Value>* p);
 	BinaryNode<Key,Value>* rightRotate(BinaryNode<Key,Value>* p);
 	BinaryNode<Key,Value>* leftRotate(BinaryNode<Key,Value>* p);
-	BinaryNode<Key,Value>* insertUtil(BinaryNode<Key,Value>* p, const Key& key, const Value& value);
+	BinaryNode<Key,Value>* insertUtil(BinaryNode<Key,Value>* root, const Key& key, const Value& value);
 	BinaryNode<Key,Value>* deleteUtil(BinaryNode<Key,Value>* p, const Key& key);
 	AVL()
 	{
@@ -32,14 +33,21 @@ public:
 	}
 	void put(const Key& key, const Value& value);
 	void remove(const Key& key);
+	BinaryNode<Key,Value>* getRoot();
 };
+
+template <class Key, class Value>
+BinaryNode<Key,Value>* AVL<Key, Value>::getRoot()
+{
+	return this->root;
+}
 
 template <class Key, class Value>
 int AVL<Key, Value>::getBalance(BinaryNode<Key,Value> *p)
 {
 	if (p==NULL)
 		return 0;
-	return ghUtil(p->left)-ghUtil(p->right);
+	return height(p->left)-height(p->right);
 }
 
 template <class Key, class Value>
@@ -59,6 +67,10 @@ BinaryNode<Key,Value>* AVL<Key,Value>::rightRotate(BinaryNode<Key,Value>* p)
 	p->parent=x;
 	p->left=y;
 	x->right=p;
+	p->height=max(height(p->left),height(p->right));
+	x->height=max(height(x->left),height(x->right));
+	p->size=1+size(p->left)+size(p->right);
+	x->size=1+size(x->left)+size(x->right);
 	return x;
 }
 
@@ -79,58 +91,80 @@ BinaryNode<Key,Value>* AVL<Key,Value>::leftRotate(BinaryNode<Key,Value>* p)
 	p->parent=x;
 	p->right=y;
 	x->left=p;
+	p->height=max(height(p->left),height(p->right));
+	x->height=max(height(x->left),height(x->right));
+	p->size=1+size(p->left)+size(p->right);
+	x->size=1+size(x->left)+size(x->right);
 	return x;
 }
 
 template <class Key, class Value>
-BinaryNode<Key,Value>* AVL<Key,Value>::insertUtil(BinaryNode<Key,Value>* p, const Key& key, const Value& value)
+int height(BinaryNode<Key,Value>* p)
 {
-	BinaryNode<Key,Value> *x;
 	if (p==NULL)
+		return 0;
+	return p->height;
+}
+
+template <class Key, class Value>
+int size(BinaryNode<Key,Value>* p)
+{
+	if (p==NULL)
+		return 0;
+	return p->size;
+}
+
+template <class Key, class Value>
+BinaryNode <Key,Value>* AVL<Key,Value>::insertUtil(BinaryNode <Key,Value> * root ,const Key& key,const Value& value)
+{
+	BinaryNode <Key,Value> *ptr;
+	if(root==NULL)
 	{
-		x = new BinaryNode<Key,Value>(key,value);
-		return x;
+		ptr=new BinaryNode <Key,Value>(key,value);
+		ptr->height=1;
+		ptr->size=1;
+		return ptr;
 	}
-	if (key<p->key)
+	if(root->key>=key)
 	{
-		x=insertUtil(p->left,key,value);
-		x->parent=p;
-		p->left=x;
+		ptr=insertUtil(root->left,key,value);
+		ptr->parent=root;
+		root->left=ptr;
 	}
-	else if (p->key<key)
+	else if(root->key<key)
 	{
-		x=insertUtil(p->right,key,value);
-		x->parent=p;
-		p->right=x;
+		ptr=insertUtil(root->right,key,value);
+		ptr->parent=root;
+		root->right=ptr;
 	}
-	int bal=getBalance(p);
-	if (bal>1) //L
+	root->height=1+max(height(root->left),height(root->right));
+	root->size=1+size(root->left)+size(root->right);
+	int bal=getBalance(root);
+	if (bal>1 &&key<root->left->key)
 	{
-		if (key<p->left->key) //LL case
-			return rightRotate(p);
-		else if (key>p->left->key) //LR case
-		{
-			p->left=leftRotate(p->left);
-			return rightRotate(p);
-		}
+		return rightRotate(root);
 	}
-	else if (bal<-1) //R
+	if (bal < -1 && key > root->right->key)
 	{
-		if (key>p->right->key) //RR case
-			return leftRotate(p);
-		else if (key<p->right->key) //RL case
-		{
-			p->right=rightRotate(p->right);
-			return leftRotate(p);
-		}
+		return leftRotate(root);
 	}
-	return p;
+	if (bal>1 && key>root->left->key)
+	{
+		root->left=leftRotate(root->left);
+		return rightRotate(root);
+	}
+	if (bal<-1&&key<root->right->key)
+	{
+		root->right=rightRotate(root->right);
+		return leftRotate(root);
+	}
+	return root;
 }
 
 template <class Key, class Value>
 void AVL<Key,Value>::put(const Key& key, const Value& value)
 {
-	this->root=insertUtil(this->root,key,value);
+	this->root =insertUtil(this->root,key,value);
 }
 
 template <class Key, class Value>

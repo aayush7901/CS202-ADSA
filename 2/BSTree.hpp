@@ -77,15 +77,15 @@ void BSTree<Key,Value>::print()
 }
 
 template <class Key, class Value>
-BinaryNode<Key,Value>* removeUtil(BinaryNode<Key,Value> *p, const Key &key)
+void removeUtil(BinaryNode<Key,Value> *p, const Key &key)
 {
-	BinaryNode<Key,Value> *succ, *tmp;
+	BinaryNode<Key,Value> *succ;
 	if (p==NULL)
-		return p;
+		return;
 	if (key<p->key)
-		p->left=removeUtil(p->left,key);
+		removeUtil(p->left,key);
 	else if (key>p->key)
-		p->right=removeUtil(p->right,key);
+		removeUtil(p->right,key);
 	else
 	{
 		if (p->left && p->right)
@@ -95,33 +95,51 @@ BinaryNode<Key,Value>* removeUtil(BinaryNode<Key,Value> *p, const Key &key)
 				succ=succ->left;
 			p->key=succ->key;
 			p->val=succ->val;
-			p->right=removeUtil(p->right,succ->key);
+			removeUtil(p->right,succ->key);
 		}
 		else
 		{
-			tmp=p;
 			if (p->left)
 			{
+				if (p->parent)
+				{
+					if (p==p->parent->left)
+						p->parent->left=p->left;
+					else
+						p->parent->right=p->left;
+				}
 				p->left->parent=p->parent;
-				p=p->left;
 			}
 			else if (p->right)
 			{
-				p->right->parent=p->right;
-				p=p->right;
+				if (p->parent)
+				{
+					if (p==p->parent->left)
+						p->parent->left=p->right;
+					else
+						p->parent->right=p->right;
+				}
+				p->right->parent=p->parent;
 			}
 			else
-				p=NULL;
-			delete tmp;
+			{
+				if (p->parent)
+				{
+					if (p==p->parent->left)
+						p->parent->left=NULL;
+					else
+						p->parent->right=NULL;
+				}
+			}
+			delete p;
 		}
 	}
-	return p;
 }
 
 template <class Key, class Value>
 void BSTree<Key,Value>::remove(const Key& key)
 {
-	this->root=removeUtil(this->root,key);
+	removeUtil(this->root,key);
 }
 
 template <class Key, class Value>
@@ -219,41 +237,98 @@ Key succUtil(BinaryNode<Key,Value>* root, BinaryNode<Key,Value>* p)
 {
 	if (p->right!=NULL)
 		return minUtil(p->right);
+	if (p->parent==NULL)
+	 	return p->key;
 	BinaryNode<Key,Value>* x=p->parent;
-	while (x!=NULL && p==x->right)
+	while (x!=NULL  && p==x->right)
 	{
 		p=x;
 		x=x->parent;
 	}
+	if (x==NULL)
+		return p->key;
 	return x->key;
 }
 
 template <class Key, class Value>
 Key BSTree<Key,Value>::successor(const Key& key)
 {
-	BinaryNode<Key,Value>*p=findUtil(this->root,key);
-	return succUtil(this->root,p);
-}
-
-template <class Key, class Value>
-Key predUtil(BinaryNode<Key,Value>* root, BinaryNode<Key,Value>* p)
-{
-	if (p->left!=NULL)
-		return maxUtil(p->left);
-	BinaryNode<Key,Value>* x=p->parent;
-	while (x!=NULL && p==x->left)
+	BinaryNode<Key, Value> *p = this->root;
+	while (p)
 	{
-		p=x;
-		x=x->parent;
+		if (p->key == key)
+			break;
+		if (p->key > key)
+			p = p->left;
+		else
+			p = p->right;
 	}
-	return x->key;
+	if (!p)
+		return key;
+	if (p->right)
+	{
+		p = p->right;
+		while (p)
+		{
+			if (!p->left)
+				break;
+			p = p->left;
+		}
+		if (!p)
+			return key;
+		return p->key;
+	}
+	else
+	{
+		while (p)
+		{
+			if (p->key > key)
+				return p->key;
+			p = p->parent;
+		}
+		if (!p)
+			return key;
+	}
 }
 
 template <class Key, class Value>
 Key BSTree<Key,Value>::predecessor(const Key& key)
 {
-	BinaryNode<Key,Value>*p=findUtil(this->root,key);
-	return predUtil(this->root,p);
+	BinaryNode<Key, Value> *p = this->root;
+	while (p)
+	{
+		if (p->key == key)
+			break;
+		if (p->key > key)
+			p = p->left;
+		else
+			p = p->right;
+	}
+	if (!p)
+		return key;
+	if (p->left)
+	{
+		p = p->left;
+		while(p)
+		{
+			if (!p->right)
+				break;
+			p = p->right;
+		}
+		if (!p)
+			return key;
+		return p->key;
+	}
+	else
+	{
+		while (p)
+		{
+			if (p->key < key)
+				return p->key;
+			p = p->parent;
+		}
+		if (!p)
+			return key;
+	}
 }
-
 #endif  /* ifndef BSTREE_HPP */

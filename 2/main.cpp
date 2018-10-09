@@ -5,7 +5,7 @@
 #include <iostream>
 
 template <class Key, class Value>
-void btinp(BinaryTree<Key,Value> a)
+void btinp(BinaryTree<Key,Value>& a)
 {
 	int q,x;
 	Key y;
@@ -56,7 +56,7 @@ void btinp(BinaryTree<Key,Value> a)
 }
 
 template <class Key, class Value>
-void bstinp(BSTree<Key,Value> a)
+void bstinp(BSTree<Key,Value>& a)
 {
 	int q,x;
 	Key y;
@@ -107,7 +107,7 @@ void bstinp(BSTree<Key,Value> a)
 }
 
 template <class Key, class Value>
-void avlinp(AVL<Key,Value> a)
+void avlinp(AVL<Key,Value>& a)
 {
 	int q,x;
 	Key y;
@@ -158,7 +158,7 @@ void avlinp(AVL<Key,Value> a)
 }
 
 template <class Key, class Value>
-void rbtinp(RBTree<Key,Value> a)
+void rbtinp(RBTree<Key,Value>& a)
 {
 	int q,x;
 	Key y;
