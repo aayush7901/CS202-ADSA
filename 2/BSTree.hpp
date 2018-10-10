@@ -233,24 +233,6 @@ BinaryNode<Key,Value>* findUtil(BinaryNode<Key,Value> *p, const Key &key)
 }
 
 template <class Key, class Value>
-Key succUtil(BinaryNode<Key,Value>* root, BinaryNode<Key,Value>* p)
-{
-	if (p->right!=NULL)
-		return minUtil(p->right);
-	if (p->parent==NULL)
-	 	return p->key;
-	BinaryNode<Key,Value>* x=p->parent;
-	while (x!=NULL  && p==x->right)
-	{
-		p=x;
-		x=x->parent;
-	}
-	if (x==NULL)
-		return p->key;
-	return x->key;
-}
-
-template <class Key, class Value>
 Key BSTree<Key,Value>::successor(const Key& key)
 {
 	BinaryNode<Key, Value> *p = this->root;
