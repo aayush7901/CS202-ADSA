@@ -152,7 +152,7 @@ BinaryNode<Key,Value>* putUtil(BinaryNode<Key,Value>* p, const Key& key, const V
 		p->left=putUtil(p->left,key,value);
 		p->left->parent=p;
 	}
-	else if (key>p->key)
+	else if (key>=p->key)
 	{
 		p->right=putUtil(p->right,key,value);
 		p->right->parent=p;
@@ -230,6 +230,24 @@ BinaryNode<Key,Value>* findUtil(BinaryNode<Key,Value> *p, const Key &key)
 		return findUtil(p->right,key);
 	else
 		return p;
+}
+
+template <class Key, class Value>
+Key succUtil(BinaryNode<Key,Value>* root, BinaryNode<Key,Value>* p)
+{
+	if (p->right!=NULL)
+		return minUtil(p->right);
+	if (p->parent==NULL)
+	 	return p->key;
+	BinaryNode<Key,Value>* x=p->parent;
+	while (x!=NULL  && p==x->right)
+	{
+		p=x;
+		x=x->parent;
+	}
+	if (x==NULL)
+		return p->key;
+	return x->key;
 }
 
 template <class Key, class Value>

@@ -51,7 +51,32 @@ public:
 	 * Apart from these functions, also provide functions for rotations in the tree.
 	 * The signature of the rotation functions is omitted to provide you flexibility in how you implement the internals of your node.
 	 */
+	BinaryNode<Key,Value>* getRoot();
 };
+
+template<class Key, class Value>
+BinaryNode<Key,Value>* RBTree<Key,Value>::getRoot()
+{
+	return (this->root);
+}
+
+template<class Key,class Value>
+int size(BinaryNode<Key,Value>* p)
+{
+	if (p==NULL)
+		return 0;
+	return 1+size(p->left)+size(p->right);
+}
+
+template<class Key,class Value>
+void sizeUpdate(BinaryNode<Key,Value>* p)
+{
+	while (p!=NULL)
+	{
+		p->size=1+size(p->left)+size(p->right);
+		p=p->parent;
+	}
+}
 
 template <class Key, class Value>
 BinaryNode<Key,Value>* RBTree<Key,Value>::rightRotate(BinaryNode<Key,Value>* g)
@@ -156,7 +181,9 @@ void RBTree<Key,Value>::insert(const Key& key, const Value& value)
 	this->root = putUtil(this->root,key,value); 	// BST Insert
 	BinaryNode<Key,Value> *p = findUtil(this->root, key);
 	p->color=RED; 		// set color of inserted node to RED
+	p->size=1;
 	insertRBFixup(p); 	// recolor or rotate
+	sizeUpdate(p);
 }
 
 template <class Key, class Value>
@@ -317,7 +344,7 @@ void printrb(BinaryNode<Key,Value> *root)
 template <class Key, class Value>
 void RBTree<Key,Value> :: printrbtree()
 {
-//	std::cout<<this->root->color<<"\n";
+	std::cout<<this->root->color<<"\n";
 	printrb(this->root);
 }
 

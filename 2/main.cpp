@@ -35,8 +35,6 @@ void btinp(BinaryTree<Key,Value>& a)
 				if (gv!=1)
 					a.put(y,gv-1);
 			}
-			else
-				cout<<"Key Not Found\n";
 		}
 		else if (x==3) //find
 		{
@@ -86,8 +84,6 @@ void bstinp(BSTree<Key,Value>& a)
 				if (gv!=1)
 					a.put(y,gv-1);
 			}
-			else
-				cout<<"Key Not Found\n";
 		}
 		else if (x==3) //find
 		{
@@ -137,8 +133,6 @@ void avlinp(AVL<Key,Value>& a)
 				if (gv!=1)
 					a.put(y,gv-1);
 			}
-			else
-				cout<<"Key Not Found\n";
 		}
 		else if (x==3) //find
 		{
@@ -182,7 +176,7 @@ void rbtinp(RBTree<Key,Value>& a)
 			}
 			else
 				a.insert(y,1);
-			// a.printrbtree();
+			a.printrbtree();
 		}
 		else if (x==2) //delete
 		{
@@ -198,8 +192,6 @@ void rbtinp(RBTree<Key,Value>& a)
 				if (gv!=1)
 					a.insert(y,gv-1);
 			}
-			else
-				cout<<"Key Not Found\n";
 			// a.printrbtree();
 		}
 		else if (x==3) //find

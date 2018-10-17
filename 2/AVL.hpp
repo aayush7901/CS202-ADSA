@@ -33,14 +33,7 @@ public:
 	}
 	void put(const Key& key, const Value& value);
 	void remove(const Key& key);
-	BinaryNode<Key,Value>* getRoot();
 };
-
-template <class Key, class Value>
-BinaryNode<Key,Value>* AVL<Key, Value>::getRoot()
-{
-	return this->root;
-}
 
 template <class Key, class Value>
 int AVL<Key, Value>::getBalance(BinaryNode<Key,Value> *p)
@@ -69,8 +62,6 @@ BinaryNode<Key,Value>* AVL<Key,Value>::rightRotate(BinaryNode<Key,Value>* p)
 	x->right=p;
 	p->height=max(height(p->left),height(p->right));
 	x->height=max(height(x->left),height(x->right));
-	p->size=1+size(p->left)+size(p->right);
-	x->size=1+size(x->left)+size(x->right);
 	return x;
 }
 
@@ -93,8 +84,6 @@ BinaryNode<Key,Value>* AVL<Key,Value>::leftRotate(BinaryNode<Key,Value>* p)
 	x->left=p;
 	p->height=max(height(p->left),height(p->right));
 	x->height=max(height(x->left),height(x->right));
-	p->size=1+size(p->left)+size(p->right);
-	x->size=1+size(x->left)+size(x->right);
 	return x;
 }
 
@@ -107,14 +96,6 @@ int height(BinaryNode<Key,Value>* p)
 }
 
 template <class Key, class Value>
-int size(BinaryNode<Key,Value>* p)
-{
-	if (p==NULL)
-		return 0;
-	return p->size;
-}
-
-template <class Key, class Value>
 BinaryNode <Key,Value>* AVL<Key,Value>::insertUtil(BinaryNode <Key,Value> * root ,const Key& key,const Value& value)
 {
 	BinaryNode <Key,Value> *ptr;
@@ -122,7 +103,6 @@ BinaryNode <Key,Value>* AVL<Key,Value>::insertUtil(BinaryNode <Key,Value> * root
 	{
 		ptr=new BinaryNode <Key,Value>(key,value);
 		ptr->height=1;
-		ptr->size=1;
 		return ptr;
 	}
 	if(root->key>=key)
@@ -138,7 +118,6 @@ BinaryNode <Key,Value>* AVL<Key,Value>::insertUtil(BinaryNode <Key,Value> * root
 		root->right=ptr;
 	}
 	root->height=1+max(height(root->left),height(root->right));
-	root->size=1+size(root->left)+size(root->right);
 	int bal=getBalance(root);
 	if (bal>1 &&key<root->left->key)
 	{
@@ -164,6 +143,7 @@ BinaryNode <Key,Value>* AVL<Key,Value>::insertUtil(BinaryNode <Key,Value> * root
 template <class Key, class Value>
 void AVL<Key,Value>::put(const Key& key, const Value& value)
 {
+
 	this->root =insertUtil(this->root,key,value);
 }
 

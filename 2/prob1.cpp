@@ -1,5 +1,5 @@
 #include <iostream>
-#include "AVL.hpp"
+#include "RBTree.hpp"
 #define ll long long
 using namespace std;
 
@@ -54,7 +54,7 @@ int main()
 		arr[i].index=i+1;
 	}
 	mergesort(arr,0,n-1);
-	AVL<ll,ll> a;
+	RBTree<ll,ll> a;
 	ll pred[n],succ[n],res[n];
 	for (i=n-1;i>=0;i--)
 	{
