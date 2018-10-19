@@ -63,9 +63,18 @@ BinaryNode<Key,Value>* RBTree<Key,Value>::getRoot()
 template<class Key,class Value>
 int size(BinaryNode<Key,Value>* p)
 {
+	int pl,pr;
 	if (p==NULL)
 		return 0;
-	return 1+size(p->left)+size(p->right);
+	if (p->left==NULL)
+		pl=0;
+	else
+		pl=p->left->size;
+	if (p->right==NULL)
+		pr=0;
+	else
+		pr=p->right->size;
+	return 1+pl+pr;
 }
 
 template<class Key,class Value>
@@ -95,6 +104,8 @@ BinaryNode<Key,Value>* RBTree<Key,Value>::rightRotate(BinaryNode<Key,Value>* g)
 	g->parent=p;
 	g->left=rchild;
 	p->right=g;
+	p->size=g->size;
+	g->size=1+size(g->left)+size(g->right);
 	return p;
 }
 
@@ -115,6 +126,8 @@ BinaryNode<Key,Value>* RBTree<Key,Value>::leftRotate(BinaryNode<Key,Value>* g)
 	g->parent=p;
 	g->right=lchild;
 	p->left=g;
+	p->size=g->size;
+	g->size=1+size(g->left)+size(g->right);
 	return p;
 }
 
@@ -181,9 +194,8 @@ void RBTree<Key,Value>::insert(const Key& key, const Value& value)
 	this->root = putUtil(this->root,key,value); 	// BST Insert
 	BinaryNode<Key,Value> *p = findUtil(this->root, key);
 	p->color=RED; 		// set color of inserted node to RED
-	p->size=1;
-	insertRBFixup(p); 	// recolor or rotate
 	sizeUpdate(p);
+	insertRBFixup(p); 	// recolor or rotate
 }
 
 template <class Key, class Value>

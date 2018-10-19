@@ -38,9 +38,18 @@ public:
 template <class Key, class Value>
 int AVL<Key, Value>::getBalance(BinaryNode<Key,Value> *p)
 {
+	int lh,rh;
 	if (p==NULL)
 		return 0;
-	return height(p->left)-height(p->right);
+	if (p->left==NULL)
+		lh=0;
+	else
+		lh=p->left->height;
+	if (p->right==NULL)
+		rh=0;
+	else
+		rh=p->right->height;
+	return lh-rh;
 }
 
 template <class Key, class Value>

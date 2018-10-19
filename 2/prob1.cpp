@@ -58,7 +58,7 @@ int main()
 	ll pred[n],succ[n],res[n];
 	for (i=n-1;i>=0;i--)
 	{
-		a.put(arr[i].index, arr[i].val);
+		a.insert(arr[i].index, arr[i].val);
 		succ[i]=a.successor(arr[i].index);
 		pred[i]=a.predecessor(arr[i].index);
 		if (succ[i]==arr[i].index)
