@@ -1,11 +1,15 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// Edit Distance (Levinshtein Distance)
+// Space Complexity = O(m*n)
+// Time Complexity = O(m*n)
+
 #define UP 1
 #define LEFT 2
 #define DIAG 3
 
-void align(string a, string b, int gp, int mp)
+void align(const string& a, const string& b, int gp, int mp)
 {
 	int i,j,m=a.length(),n=b.length();
 	int dp[m+1][n+1];	//stores cost to change a to b with removal, insertion or replacements
@@ -13,12 +17,12 @@ void align(string a, string b, int gp, int mp)
 	for (i=0;i<m+1;i++)
 	{
 		dp[i][0]=gp*i;
-		prev[i][0]=UP;
+		prev[i][0]=UP;	//Remove
 	}
 	for (i=0;i<n+1;i++)
 	{
 		dp[0][i]=gp*i;
-		prev[0][i]=LEFT;
+		prev[0][i]=LEFT;  //Insert
 	}
 	for (i=1;i<=m;i++)
 	{
