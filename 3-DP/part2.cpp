@@ -198,6 +198,11 @@ vector <string> hirschberg(string x, string y)
 
 int main(int argc, char* argv[])
 {
+	if (argc<=1)
+	{
+		cout<<"Please enter an argument.\n1 for (GP,MP)=(6,4)\n2 for (GP,MP)=(4,6)\n";
+		exit(1);
+	}
 	string ar = argv[1];
 	if (ar=="1")
 		gp=6, mp=4;

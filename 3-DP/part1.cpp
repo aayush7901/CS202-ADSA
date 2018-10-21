@@ -82,6 +82,11 @@ void align(const string& a, const string& b, int gp, int mp)
 
 int main(int argc, char* argv[])
 {
+	if (argc<=1)
+	{
+		cout<<"Please enter an argument.\n1 for (GP,MP)=(6,4)\n2 for (GP,MP)=(4,6)\n";
+		exit(1);
+	}
 	string ar = argv[1];
 	int gp,mp;
 	if (ar=="1")

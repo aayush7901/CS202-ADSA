@@ -15,6 +15,17 @@ void print(vector <int> v)
 	cout<<"\n";
 }
 
+int casefnc(char a, char b)
+{
+	if ((a=='a' && b=='t')||(a=='t' && b=='a'))
+		return 1;
+	else if ((a=='g' && b=='c')||(a=='c' && b=='g'))
+		return 2;
+	else if ((a=='a' && b=='c')||(a=='c' && b=='a'))
+		return 3;
+	return 4; //other cases
+}
+
 vector <string> align(string x, string y)
 {
 	int xlen=x.length();
@@ -225,12 +236,16 @@ vector <string> hirschberg(string x, string y)
 
 int main(int argc, char* argv[])
 {
-	string ar = argv[1];
-	gp=atoi(argv[2]);
-	mpat=atoi(argv[3]);
-	mpgc=atoi(argv[4]);
-	mpac=atoi(argv[5]);
-	mp=atoi(argv[6]);
+	if (argc<=5)
+	{
+		cout<<"Please enter arguments GP, MPAT, MPGC, MPAC, MP before execution.\n";
+		exit(1);
+	}
+	gp=atoi(argv[1]);
+	mpat=atoi(argv[2]);
+	mpgc=atoi(argv[3]);
+	mpac=atoi(argv[4]);
+	mp=atoi(argv[5]);
 	string x,y;
 	cin>>x>>y;
 	vector <string> v=hirschberg(x,y);
