@@ -1,11 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Edit Distance (Levinshtein Distance OR Sequence Alignment OR Hirschberg Algorithm) in Linear Space
+// Edit Distance (Sequence Alignment OR Hirschberg Algorithm) in Linear Space
 // Space Complexity = O(m+n)
 // Time Complexity = O(m*n)
 
-int gp,mp; //gap penalty and mismatch penalty
+int gp,mpat,mpgc,mpac,mp; //gap penalty and mismatch penalties
 int i,j;
 
 void print(vector <int> v)
@@ -32,7 +32,16 @@ vector <string> align(string x, string y)
 			if (x[j-1]==y[i-1])
 				diag=dp[i-1][j-1];
 			else
-				diag=dp[i-1][j-1]+mp;
+			{
+				if (casefnc(x[j-1],y[j-1])==1)
+					diag=dp[i-1][j-1]+mpat;
+				else if (casefnc(x[j-1],y[j-1])==2)
+					diag=dp[i-1][j-1]+mpgc;
+				else if (casefnc(x[j-1],y[j-1])==3)
+					diag=dp[i-1][j-1]+mpac;
+				else
+					diag=dp[i-1][j-1]+mp;
+			}
 			left=dp[i][j-1]+gp;
 			up=dp[i-1][j]+gp;
 			dp[i][j]=min(diag,min(up,left));
@@ -93,7 +102,16 @@ vector <int> getlast(string x, string y)
 			if (x[j-1]==y[i-1])
 				diag=dp[0][j-1];
 			else
-				diag=dp[0][j-1]+mp;
+			{
+				if (casefnc(x[j-1],y[j-1])==1)
+					diag=dp[i-1][j-1]+mpat;
+				else if (casefnc(x[j-1],y[j-1])==2)
+					diag=dp[i-1][j-1]+mpgc;
+				else if (casefnc(x[j-1],y[j-1])==3)
+					diag=dp[i-1][j-1]+mpac;
+				else
+					diag=dp[i-1][j-1]+mp;
+			}
 			left=dp[1][j-1]+gp;
 			up=dp[0][j]+gp;
 			dp[1][j]=min(diag,min(up,left));
@@ -106,6 +124,42 @@ vector <int> getlast(string x, string y)
 	for (i=0;i<=xlen;i++)
 		v[i]=dp[0][i];
 	return v;
+}
+
+int getres(string x, string y)
+{
+	int xlen=x.length();
+	int ylen=y.length();
+	int dp[2][xlen+1];
+	int diag,up,left;
+	for (j=0;j<=xlen;j++)
+		dp[0][j]=gp*j;
+	for (i=1;i<=ylen;i++)
+	{
+		dp[1][0]=gp*i;
+		for (j=1;j<=xlen;j++)
+		{
+			if (x[j-1]==y[i-1])
+				diag=dp[0][j-1];
+			else
+			{
+				if (casefnc(x[j-1],y[j-1])==1)
+					diag=dp[i-1][j-1]+mpat;
+				else if (casefnc(x[j-1],y[j-1])==2)
+					diag=dp[i-1][j-1]+mpgc;
+				else if (casefnc(x[j-1],y[j-1])==3)
+					diag=dp[i-1][j-1]+mpac;
+				else
+					diag=dp[i-1][j-1]+mp;
+			}
+			left=dp[1][j-1]+gp;
+			up=dp[0][j]+gp;
+			dp[1][j]=min(diag,min(up,left));
+		}
+		for (j=0;j<=xlen;j++)
+			dp[0][j]=dp[1][j];
+	}
+	return dp[0][xlen];
 }
 
 int getmin(vector<int> upscore, vector<int> downscore)
@@ -172,13 +226,15 @@ vector <string> hirschberg(string x, string y)
 int main(int argc, char* argv[])
 {
 	string ar = argv[1];
-	if (ar=="1")
-		gp=6, mp=4;
-	else if (ar=="2")
-		gp=4, mp=6;
+	gp=atoi(argv[2]);
+	mpat=atoi(argv[3]);
+	mpgc=atoi(argv[4]);
+	mpac=atoi(argv[5]);
+	mp=atoi(argv[6]);
 	string x,y;
 	cin>>x>>y;
 	vector <string> v=hirschberg(x,y);
 	cout<<v[0]<<"\n"<<v[1]<<"\n";
+	cout<<"Cost = "<<getres(x,y)<<"\n";
 	return 0;
 }

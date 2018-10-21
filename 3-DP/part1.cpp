@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Edit Distance (Levinshtein Distance)
+// Edit Distance (Sequence Alignment OR Levinshtein Distance)
 // Space Complexity = O(m*n)
 // Time Complexity = O(m*n)
 
