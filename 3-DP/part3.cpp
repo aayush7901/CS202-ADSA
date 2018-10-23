@@ -1,11 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#define ll long long
+
 // Edit Distance (Sequence Alignment OR Hirschberg Algorithm) in Linear Space
 // Space Complexity = O(m+n)
 // Time Complexity = O(m*n)
 
-int gp,mpat,mpgc,mpac,mp; //gap penalty and mismatch penalties
+ll gp,mpat,mpgc,mpac,mp; //gap penalty and mismatch penalties
 int i,j;
 
 void print(vector <int> v)
@@ -17,11 +19,11 @@ void print(vector <int> v)
 
 int casefnc(char a, char b)
 {
-	if ((a=='a' && b=='t')||(a=='t' && b=='a'))
+	if ((a=='A' && b=='T')||(a=='T' && b=='A')||(a=='t' && b=='a')||(a=='a' && b=='t'))
 		return 1;
-	else if ((a=='g' && b=='c')||(a=='c' && b=='g'))
+	else if ((a=='G' && b=='C')||(a=='C' && b=='G')||(a=='g' && b=='c')||(a=='c' && b=='g'))
 		return 2;
-	else if ((a=='a' && b=='c')||(a=='c' && b=='a'))
+	else if ((a=='A' && b=='C')||(a=='C' && b=='A')||(a=='a' && b=='c')||(a=='c' && b=='a'))
 		return 3;
 	return 4; //other cases
 }
@@ -30,8 +32,8 @@ vector <string> align(string x, string y)
 {
 	int xlen=x.length();
 	int ylen=y.length();
-	int dp[ylen+1][xlen+1];
-	int diag,up,left;
+	ll dp[ylen+1][xlen+1];
+	ll diag,up,left;
 	for (j=0;j<=xlen;j++)
 		dp[0][j]=gp*j;
 	for (i=0;i<=ylen;i++)
@@ -44,11 +46,11 @@ vector <string> align(string x, string y)
 				diag=dp[i-1][j-1];
 			else
 			{
-				if (casefnc(x[j-1],y[j-1])==1)
+				if (casefnc(x[j-1],y[i-1])==1)
 					diag=dp[i-1][j-1]+mpat;
-				else if (casefnc(x[j-1],y[j-1])==2)
+				else if (casefnc(x[j-1],y[i-1])==2)
 					diag=dp[i-1][j-1]+mpgc;
-				else if (casefnc(x[j-1],y[j-1])==3)
+				else if (casefnc(x[j-1],y[i-1])==3)
 					diag=dp[i-1][j-1]+mpac;
 				else
 					diag=dp[i-1][j-1]+mp;
@@ -63,9 +65,9 @@ vector <string> align(string x, string y)
 	v[0]="",v[1]="";
 	while (xlen>0 && ylen>0)
 	{
-		int s=dp[ylen][xlen];
-		int sup=dp[ylen-1][xlen];
-		int sleft=dp[ylen][xlen-1];
+		ll s=dp[ylen][xlen];
+		ll sup=dp[ylen-1][xlen];
+		ll sleft=dp[ylen][xlen-1];
 		if (s==sleft+gp)
 		{
 			v[1]+='-';
@@ -97,12 +99,12 @@ vector <string> align(string x, string y)
 	return v;
 }
 
-vector <int> getlast(string x, string y)
+vector <ll> getlast(string x, string y)
 {
 	int xlen=x.length();
 	int ylen=y.length();
-	int dp[2][xlen+1];
-	int diag,up,left;
+	ll dp[2][xlen+1];
+	ll diag,up,left;
 	for (j=0;j<=xlen;j++)
 		dp[0][j]=gp*j;
 	for (i=1;i<=ylen;i++)
@@ -114,14 +116,14 @@ vector <int> getlast(string x, string y)
 				diag=dp[0][j-1];
 			else
 			{
-				if (casefnc(x[j-1],y[j-1])==1)
-					diag=dp[i-1][j-1]+mpat;
-				else if (casefnc(x[j-1],y[j-1])==2)
-					diag=dp[i-1][j-1]+mpgc;
-				else if (casefnc(x[j-1],y[j-1])==3)
-					diag=dp[i-1][j-1]+mpac;
+				if (casefnc(x[j-1],y[i-1])==1)
+					diag=dp[0][j-1]+mpat;
+				else if (casefnc(x[j-1],y[i-1])==2)
+					diag=dp[0][j-1]+mpgc;
+				else if (casefnc(x[j-1],y[i-1])==3)
+					diag=dp[0][j-1]+mpac;
 				else
-					diag=dp[i-1][j-1]+mp;
+					diag=dp[0][j-1]+mp;
 			}
 			left=dp[1][j-1]+gp;
 			up=dp[0][j]+gp;
@@ -131,18 +133,18 @@ vector <int> getlast(string x, string y)
 			dp[0][j]=dp[1][j];
 	}
 
-	vector <int> v(xlen+1);
+	vector <ll> v(xlen+1);
 	for (i=0;i<=xlen;i++)
 		v[i]=dp[0][i];
 	return v;
 }
 
-int getres(string x, string y)
+ll getres(string x, string y)
 {
 	int xlen=x.length();
 	int ylen=y.length();
-	int dp[2][xlen+1];
-	int diag,up,left;
+	ll dp[2][xlen+1];
+	ll diag,up,left;
 	for (j=0;j<=xlen;j++)
 		dp[0][j]=gp*j;
 	for (i=1;i<=ylen;i++)
@@ -154,14 +156,14 @@ int getres(string x, string y)
 				diag=dp[0][j-1];
 			else
 			{
-				if (casefnc(x[j-1],y[j-1])==1)
-					diag=dp[i-1][j-1]+mpat;
-				else if (casefnc(x[j-1],y[j-1])==2)
-					diag=dp[i-1][j-1]+mpgc;
-				else if (casefnc(x[j-1],y[j-1])==3)
-					diag=dp[i-1][j-1]+mpac;
+				if (casefnc(x[j-1],y[i-1])==1)
+					diag=dp[0][j-1]+mpat;
+				else if (casefnc(x[j-1],y[i-1])==2)
+					diag=dp[0][j-1]+mpgc;
+				else if (casefnc(x[j-1],y[i-1])==3)
+					diag=dp[0][j-1]+mpac;
 				else
-					diag=dp[i-1][j-1]+mp;
+					diag=dp[0][j-1]+mp;
 			}
 			left=dp[1][j-1]+gp;
 			up=dp[0][j]+gp;
@@ -173,9 +175,9 @@ int getres(string x, string y)
 	return dp[0][xlen];
 }
 
-int getmin(vector<int> upscore, vector<int> downscore)
+ll getmin(vector<ll> upscore, vector<ll> downscore)
 {
-	int mini=INT_MAX,res;
+	ll mini=LONG_MAX,res;
 	for (i=0,j=downscore.size()-1;i<upscore.size();i++,j--)
 	{
 		if (upscore[i]+downscore[j]<mini)
@@ -222,13 +224,13 @@ vector <string> hirschberg(string x, string y)
 	{
 		int ylen=y.length();
 		int midy=ylen/2;
-		vector <int> upscore=getlast(x,y.substr(0,midy));
+		vector <ll> upscore=getlast(x,y.substr(0,midy));
 		string xrev=x;
 		reverse(xrev.begin(),xrev.end());
 		string yrev=y.substr(midy,y.length());
 		reverse(yrev.begin(),yrev.end());
-		vector <int> downscore=getlast(xrev,yrev);
-		int minix=getmin(upscore,downscore);
+		vector <ll> downscore=getlast(xrev,yrev);
+		ll minix=getmin(upscore,downscore);
 		v=concatfnc(hirschberg(x.substr(0,minix),y.substr(0,midy)),hirschberg(x.substr(minix,x.length()),y.substr(midy,y.length())));
 	}
 	return v;
@@ -241,11 +243,11 @@ int main(int argc, char* argv[])
 		cout<<"Please enter arguments GP, MPAT, MPGC, MPAC, MP before execution.\n";
 		exit(1);
 	}
-	gp=atoi(argv[1]);
-	mpat=atoi(argv[2]);
-	mpgc=atoi(argv[3]);
-	mpac=atoi(argv[4]);
-	mp=atoi(argv[5]);
+	gp=atoll(argv[1]);
+	mpat=atoll(argv[2]);
+	mpgc=atoll(argv[3]);
+	mpac=atoll(argv[4]);
+	mp=atoll(argv[5]);
 	string x,y;
 	cin>>x>>y;
 	vector <string> v=hirschberg(x,y);
