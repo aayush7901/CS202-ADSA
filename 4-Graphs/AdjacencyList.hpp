@@ -10,7 +10,7 @@ class AdjListNode
 		AdjListNode();
 		AdjListNode(int value);
 		AdjListNode* next;
-}
+};
 
 /*
  * 	Class AdjacencyList
@@ -18,7 +18,7 @@ class AdjListNode
  */
 class AdjacencyList : public GraphAdjacencyBase {
 	private:
-		int **arr;
+		AdjListNode **arr;
 		int size;
 	public:
 		AdjacencyList(int vertices);
@@ -34,7 +34,7 @@ class AdjacencyList : public GraphAdjacencyBase {
 
 AdjListNode :: AdjListNode()
 {
-	this->value=0;
+	this->val=0;
 }
 
 AdjListNode :: AdjListNode(int val)
@@ -115,7 +115,7 @@ void AdjacencyList :: remove(int i, int j)
 	tmp=arr[i];
 	while (tmp!=NULL)
 	{
-		if ((arr[i])->value==j)
+		if ((arr[i])->val==j)
 		{
 			tmp=arr[i];
 			arr[i]=(arr[i])->next;
@@ -124,7 +124,7 @@ void AdjacencyList :: remove(int i, int j)
 		}
 		if (tmp->next==NULL)
 			return;
-		if (tmp->next->value==j)
+		if (tmp->next->val==j)
 		{
 			t=tmp->next;
 			tmp->next=t->next;
@@ -136,21 +136,21 @@ void AdjacencyList :: remove(int i, int j)
 
 int AdjacencyList :: degree(int i)
 {
-	int i, res=0;
+	int j,res=0;
 	AdjListNode *tmp=arr[i];
 	while (tmp!=NULL)
 	{
 		res++;
 		tmp=tmp->next;
 	}
-	for (i=0;i<(this->size);i++)
+	for (j=0;j<(this->size);j++)
 	{
 		if (i!=j)
 		{
-			tmp=arr[i];
+			tmp=arr[j];
 			while (tmp!=NULL)
 			{
-				if (tmp->val==j)
+				if (tmp->val==i)
 					res++;
 				tmp=tmp->next;
 			}
@@ -163,19 +163,19 @@ void AdjacencyList :: display()
 {
 	int i;
 	AdjListNode *tmp;
-	cout<<"\n";
+	std::cout<<"\n";
 	for (i=0;i<(this->size);i++)
 	{
 		tmp=arr[i];
-		cout<<i<<" : ";
+		std::cout<<i<<" : ";
 		while (tmp!=NULL)
 		{
-			cout<<tmp->val<<" ";
+			std::cout<<tmp->val<<" ";
 			tmp=tmp->next;
 		}
-		cout<<"\n";
+		std::cout<<"\n";
 	}
-	cout<<"\n";
+	std::cout<<"\n";
 }
 
 #endif /* ifndef ADJACENCY_LIST */

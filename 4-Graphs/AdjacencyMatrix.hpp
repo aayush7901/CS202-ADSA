@@ -49,7 +49,7 @@ AdjacencyMatrix :: ~AdjacencyMatrix()
 
 bool AdjacencyMatrix :: edgeExists(int i, int j)
 {
-	return (arr[i][j]==1)
+	return (arr[i][j]==1);
 }
 
 int AdjacencyMatrix :: vertices()
@@ -97,16 +97,16 @@ int AdjacencyMatrix :: degree(int i)
 void AdjacencyMatrix :: display()
 {
 	int i,j;
-	cout<<"\n";
+	std::cout<<"\n";
 	for (i=0;i<size;i++)
 	{
 		for (j=0;j<size;j++)
 		{
-			cout<<arr[i][j]<<" ";
+			std::cout<<arr[i][j]<<" ";
 		}
-		cout<<"\n";
+		std::cout<<"\n";
 	}
-	cout<<"\n";
+	std::cout<<"\n";
 }
 
 #endif /* ifndef ADJACENCY_MATRIX */

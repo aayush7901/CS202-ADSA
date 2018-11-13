@@ -2,7 +2,11 @@
 #define UNDIRECTED_GRAPH 1
 
 #include "AbstractGraph.hpp"
+#include "AdjacencyList.hpp"
+#include "AdjacencyMatrix.hpp"
+#include "queue.hpp"
 
+using namespace queuehelp;
 
 /*
 * A class to represent an UndirectedGraph
@@ -24,18 +28,15 @@ class UndirectedGraph : public AbstractGraph
 	   	* 'l' for AdjacencyList
 	   	*/
 	  	UndirectedGraph(int vertices, char mode);
-	  	/*
-	  	* Destructor
-	  	*/
-	  	~UndirectedGraph();
 	  	int degree(int i);
 		bool edgeExists(int i, int j);
 		int edges();
 		int vertices();
 		void add(int i, int j);
 		void remove(int i, int j);
-		void dfs(void(*work)(int&));
-		void bfs(void(*work)(int&));
+		void dfsHelp(int state[], int n, int v);
+		void dfs();
+		void bfs();
 		void display();
 };
 
@@ -44,10 +45,10 @@ UndirectedGraph :: UndirectedGraph(int vertices, char mode)
 	this->mode=mode;
 	if (mode=='l')
 		list= new AdjacencyList(vertices);
-	else if (mod=='m')
+	else if (mode=='m')
 		matrix= new AdjacencyMatrix(vertices);
 	else
-		cout<<"Please enter l or m as parameter\n";
+		std::cout<<"Please enter l or m as parameter\n";
 }
 
 int UndirectedGraph :: degree(int i)
@@ -110,21 +111,21 @@ void UndirectedGraph :: remove(int i, int j)
 	}
 }
 
-void dfsHelp(int state[], int n, int v)
+void UndirectedGraph :: dfsHelp(int state[], int n, int v)
 {
 	int i;
-	cout<<v<<" ";
+	std::cout<<v<<" ";
 	state[v]=1;
 	for (i=0;i<n;i++)
 	{
 		if (edgeExists(v,i) && state[i]==0)
-			dfsHelp(i);
+			dfsHelp(state, n, i);
 	}
 	state[v]=2;
 }
 
 
-void UndirectedGraph :: dfs(void(*work)(int&))
+void UndirectedGraph :: dfs()
 {
 	int i, state[this->vertices()];
 	for (i=0;i<(this->vertices());i++)
@@ -134,32 +135,32 @@ void UndirectedGraph :: dfs(void(*work)(int&))
 		if (state[i]==0)
 			dfsHelp(state,this->vertices(),i);
 	}
-	cout<<"\n";
+	std::cout<<"\n";
 }
 
-void UndirectedGraph :: bfs(void(*work)(int&))
+void UndirectedGraph :: bfs()
 {
 	int i, state[this->vertices()];
 	for (i=0;i<(this->vertices());i++)
 		state[i]=0;
 	queue <int> q;
-	q.push_back(0);
+	q.push(0);
 	state[0]=1;
-	while (!q.isEmpty())
+	while (!q.empty())
 	{
 		int t= q.pop();
-		cout<<t<<" ";
+		std::cout<<t<<" ";
 		state[t]=2;
-		for (i=0;i<(this->size);i++)
+		for (i=0;i<(this->vertices());i++)
 		{
 			if (edgeExists(t,i) && state[i]==0)
 			{
-				q.push_back(i);
+				q.push(i);
 				state[i]=1;
 			}
 		}
 	}
-	cout<<"\n";
+	std::cout<<"\n";
 }
 
 void UndirectedGraph :: display()
